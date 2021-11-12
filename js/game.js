@@ -104,7 +104,7 @@ function createScene() {
   container = document.getElementById('world');
   container.appendChild(renderer.domElement);
 
-
+  // BACKGROUND
   const backgroundloader = new THREE.TextureLoader();
   backgroundloader.load('img/bg2.JPG' , function(texture)
             {
@@ -115,7 +115,6 @@ function createScene() {
 }
 
 // HANDLE SCREEN EVENTS
-
 function handleWindowResize() {
   HEIGHT = window.innerHeight;
   WIDTH = window.innerWidth;
@@ -130,8 +129,6 @@ function handleMouseUp(event){
   }
 }
 
-
-
 function handleTouchEnd(event){
   if (game.status == "waitingReplay"){
     resetGame();
@@ -140,7 +137,6 @@ function handleTouchEnd(event){
 
 
 // LIGHTS
-
 var hemisphereLight, shadowLight, spotLight;
 
 function createLights() {
@@ -171,13 +167,11 @@ function createLights() {
   scene.add(shadowLight);
 }
 
-
+// ASTRONAUT 3D MODELING
 var Astro = function(){
    this.mesh = new THREE.Object3D();
   this.mesh.name = "Astro";
    
-  
-
   var bodyGeom = new THREE.CylinderGeometry(8,8,15);
   const bodyloader = new THREE.TextureLoader();
   texBody = bodyloader.load('img/body.jpg' , function(texture)
@@ -190,8 +184,6 @@ var Astro = function(){
   body.castShadow = true;
   body.receiveShadow = true;
   this.mesh.add(body);
-
-  
 
   var armGeom = new THREE.CylinderGeometry(4,4,15);
   const armloader = new THREE.TextureLoader();
@@ -214,7 +206,6 @@ var Astro = function(){
   arm2.receiveShadow = true;
   this.mesh.add(arm2);
 
-
   var legGeom = new THREE.CylinderGeometry(4,4,15);
     const legloader = new THREE.TextureLoader();
   texLeg = legloader.load('img/leg.jpg' , function(texture)
@@ -227,8 +218,7 @@ var Astro = function(){
   leg.castShadow = true;
   leg.receiveShadow = true;
   this.mesh.add(leg);
-
-  
+ 
   var leg2Geom = new THREE.CylinderGeometry(4,4,15);
   var leg2Mat = new THREE.MeshPhongMaterial({color:Colors.white, map:texLeg});
   var leg2 = new THREE.Mesh(leg2Geom, leg2Mat);
@@ -237,7 +227,6 @@ var Astro = function(){
   leg2.receiveShadow = true;
   this.mesh.add(leg2);
 
-  
   var faceGeom = new THREE.SphereGeometry(10,10,10);
 
   const headloader = new THREE.TextureLoader();
@@ -252,7 +241,6 @@ var Astro = function(){
   face.receiveShadow = true;
   this.mesh.add(face);
 
-
   var bagGeom = new THREE.BoxGeometry(20,30,10);
   const bagloader = new THREE.TextureLoader();
   texBag = bagloader.load('img/bag.jpg' , function(texture)
@@ -266,44 +254,9 @@ var Astro = function(){
   bag.castShadow = true;
   bag.receiveShadow = true;
   this.mesh.add(bag);
-
- 
 };
 
-const raycaster = new THREE.Raycaster();
-const mouse = new THREE.Vector2();
-
-function onMouseMove( event ) {
-
-    mouse.x = ( event.clientX / window.innerWidth ) * 250 - 1;
-
-    mouse.y = - ( event.clientY / window.innerHeight ) * 250 + 1;
-
-}
-
-function animate(time) {
-	time *= 0.01;
-	model.position.x =  time;
-	model.position.y =  150;
-	model.position.z =  15;
-	if(time > 300)
-		time = 0;
-	
-    requestAnimationFrame( animate );
-
-    raycaster.setFromCamera( mouse, camera );
-
-
-    const intersects = raycaster.intersectObject( scene, true );
-
-    renderer.render( scene, camera );
-
-}
-
-window.addEventListener( 'mousemove', onMouseMove, false );
-
-
-
+// PLANET 3D MODELING
 planet = function(){
   var geom = new THREE.SphereGeometry(600,100,100);
   geom.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
@@ -323,7 +276,7 @@ planet = function(){
   this.mesh.receiveShadow = true;
 }
 
-
+// METEORIC STONES 3D MODELING
 Ennemy = function(){
   var geom = new THREE.TetrahedronGeometry(8,5);
   const meteoloader = new THREE.TextureLoader();
@@ -350,6 +303,7 @@ EnnemiesHolder = function (){
   this.ennemiesInUse = [];
 }
 
+// RANDOM SPAWN METEORIC STONE
 EnnemiesHolder.prototype.spawnEnnemies = function(){
   var nEnnemies = game.level;
 
@@ -372,12 +326,13 @@ EnnemiesHolder.prototype.spawnEnnemies = function(){
   }
 }
 
+// ROATATE METEORIC STONES
 EnnemiesHolder.prototype.rotateEnnemies = function(){
   for (var i=0; i<this.ennemiesInUse.length; i++){
     var ennemy = this.ennemiesInUse[i];
 
     ennemy.angle += game.speed*deltaTime*game.ennemiesSpeed;
-
+    
     if (ennemy.angle > Math.PI*2) ennemy.angle -= Math.PI*2;
     ennemy.mesh.position.y = -game.planetRadius + Math.sin(ennemy.angle)*ennemy.distance;
     ennemy.mesh.position.x = Math.cos(ennemy.angle)*ennemy.distance;
@@ -386,14 +341,18 @@ EnnemiesHolder.prototype.rotateEnnemies = function(){
 
     var diffPos = Astro.mesh.position.clone().sub(ennemy.mesh.position.clone());
     var d = diffPos.length();
+	  
+    // IF COLLISION ASTRONAUT AND MEEORIC STONES
     if (d<game.ennemyDistanceTolerance){
       ennemiesPool.unshift(this.ennemiesInUse.splice(i,1)[0]);
       this.mesh.remove(ennemy.mesh);
       game.astroCollisionSpeedX = 100 * diffPos.x / d;
       game.astroCollisionSpeedY = 100 * diffPos.y / d;
 
+      // DECREASE ASTRONAUT ENERGY  
       removeEnergy();
 	 
+	  // LIGHT INTERACTION BASED ON ASTRONAUT ENERGY
 	  if(game.energy < 30) {
 		  hemisphereLight.intensity = 0;
 		  shadowLight.intensity = 0;
@@ -433,7 +392,7 @@ EnnemiesHolder.prototype.rotateEnnemies = function(){
   }
 }
 
-// 3D Models
+// 3D MODELS(OBJECTS)
 var planet;
 var Astro;
 
@@ -450,7 +409,6 @@ function createplanet(){
   planet.mesh.position.y = -600;
   scene.add(planet.mesh);
 }
-
 
 function createEnnemies(){
   for (var i=0; i<10; i++){
