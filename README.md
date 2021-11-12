@@ -20,3 +20,4 @@ Astronaut left alone in space avoids meteorites.
 * Texture mapping
 * Collision
 * Acceleration
+* Light source (spotlight, shadow, etc.)
