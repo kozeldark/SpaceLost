@@ -29,3 +29,5 @@ BGM : zeroste. - lost+found
 * Acceleration
 * Light source (spotlight, shadow, etc.)
 * Changing the viewpoint
+
+Created by SungMin Hwang, ChanHee Oh, ChangHoon Kang, Byungwook Jo 
