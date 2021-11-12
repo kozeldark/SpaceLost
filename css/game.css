@@ -1,0 +1,15 @@
+.score__label {
+	font-size: 15px;
+	position: relative;
+	text-align: center;
+	letter-spacing: 3px;
+	text-transform: uppercase;
+	color: #4B89DC;
+}
+.score__energy {
+	font-size: 15px;
+	position: relative;
+	letter-spacing: 2px;
+	text-align: left;
+	color: #DB4455;
+}
