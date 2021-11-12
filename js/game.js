@@ -18,6 +18,7 @@ var ennemiesPool = [];
 var particlesPool = [];
 var particlesInUse = [];
 var bestTime = 0;
+var camPos = 1;
 
 function resetGame(){
   game = {speed:0,
@@ -105,7 +106,7 @@ function createScene() {
 
 
   const backgroundloader = new THREE.TextureLoader();
-  backgroundloader.load('img/bg2.JPG' , function(texture)
+  backgroundloader.load('./img/bg2.jpg' , function(texture)
             {
              scene.background = texture;  
             });
@@ -128,6 +129,8 @@ function handleMouseUp(event){
     resetGame();
   }
 }
+
+
 
 function handleTouchEnd(event){
   if (game.status == "waitingReplay"){
@@ -302,10 +305,10 @@ window.addEventListener( 'mousemove', onMouseMove, false );
 
 
 planet = function(){
-  var geom = new THREE.CylinderGeometry(600,400,300,40,10);
+  var geom = new THREE.SphereGeometry(600,100,100);
   geom.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
   const palnetloader = new THREE.TextureLoader();
-  textu = palnetloader.load('img/Planet.jpg' , function(texture)
+  textu = palnetloader.load('img/planet.jpg' , function(texture)
             {
              geom.background = texture;  
             });
@@ -473,7 +476,7 @@ if (game.status=="playing"){
 		hemisphereLight.intensity = 0.9;
 		shadowLight.intensity = 0.9;
 	}
-
+	
     if (Math.floor(game.distance)%game.distanceForSpeedUpdate == 0 && Math.floor(game.distance) > game.speedLastUpdate){
       game.speedLastUpdate = Math.floor(game.distance);
       var min = Math.ceil(10);
@@ -497,7 +500,7 @@ if (game.status=="playing"){
    
   }else if(game.status=="gameover"){
     game.speed *= .99;
-    Astro.mesh.rotation.z += (-Math.PI/2 - Astro.mesh.rotation.z)*.0002*deltaTime;
+    Astro.mesh.rotation.z -= (-Math.PI/2 - Astro.mesh.rotation.z)*.0002*deltaTime;
     Astro.mesh.rotation.x += 0.0003*deltaTime;
     game.astroFallSpeed *= 1.05;
     Astro.mesh.position.y -= game.astroFallSpeed*deltaTime;
@@ -513,9 +516,7 @@ if (game.status=="playing"){
   }else if (game.status=="waitingReplay"){
 
   }
-  
   planet.mesh.rotation.z += .005;
-
   ennemiesHolder.rotateEnnemies();
   renderer.render(scene, camera);
   requestAnimationFrame(loop);
@@ -619,6 +620,37 @@ function normalize(v,vmin,vmax,tmin, tmax){
 
 var timer, timerID, best_timer, remain_energy;
 
+function changeCamera(event) {
+	if (event.keyCode == 32) {
+		if (camPos == 1)
+		{
+			camPos = 0;
+			fieldOfView = 50;
+			nearplane = 0.01;
+			farplane = 5000;
+			camera.position.x = -100;
+			camera.position.z = 0;
+			camera.position.y = 250;
+			planet.mesh.rotation.z -= .005;
+			camera.lookAt(new THREE.Vector3(50, 100, 0));
+			console.log("Change");
+		}
+		else
+		{
+			camPos = 1;
+			fieldOfView = 60;
+			nearplane = 1;
+			farplane = 10000;
+			camera.position.x = 0;
+			camera.position.z = 200;
+			camera.position.y = 100;
+			planet.mesh.rotation.z += .005;
+			camera.lookAt(new THREE.Vector3(0, 100, 0));
+			console.log("Ori");
+		}
+	}
+}
+
 function init(event){
 	
 	timer = document.getElementById("time_score");
@@ -627,6 +659,7 @@ function init(event){
 	
   document.addEventListener('mousemove', handleMouseMove, false);
   document.addEventListener('mouseup', handleMouseUp, false);
+  document.addEventListener("keydown", changeCamera, false);
   
   resetGame();
   createScene();
@@ -645,7 +678,6 @@ function handleMouseMove(event) {
   mousePos = {x:tx, y:ty};
 }
 
-
 window.addEventListener('load', init, false);
 
 window.addEventListener("mousedown", function(e) {
@@ -656,4 +688,3 @@ window.addEventListener("mousedown", function(e) {
     else if ("button" in e) // IE, Opera 
         isRightButton = e.button == 2;
 });
-
