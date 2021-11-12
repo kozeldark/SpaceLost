@@ -1,9 +1,11 @@
 # SpaceLost
-Shooting game using WebGL.
+Shooting game using WebGL. Astronaut left alone in space avoids meteorites.
 
-Astronaut left alone in space avoids meteorites.
+**How to play the game :**
 
-**How to play the game : Move the astronaut through the mouse to avoid meteorites.**
+**Move the astronaut through the mouse to avoid meteorites. 
+When you press the space bar, the viewpoint changes.
+When the game is over, you can start again by pressing the left click.**
 
 -*Demo Link : https://spacelost.herokuapp.com*
 
@@ -21,3 +23,4 @@ Astronaut left alone in space avoids meteorites.
 * Collision
 * Acceleration
 * Light source (spotlight, shadow, etc.)
+* Changing the viewpoint
