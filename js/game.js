@@ -106,7 +106,7 @@ function createScene() {
 
 
   const backgroundloader = new THREE.TextureLoader();
-  backgroundloader.load('./img/bg2.jpg' , function(texture)
+  backgroundloader.load('img/bg2.JPG' , function(texture)
             {
              scene.background = texture;  
             });
@@ -308,7 +308,7 @@ planet = function(){
   var geom = new THREE.SphereGeometry(600,100,100);
   geom.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
   const palnetloader = new THREE.TextureLoader();
-  textu = palnetloader.load('img/planet.jpg' , function(texture)
+  textu = palnetloader.load('img/Planet.jpg' , function(texture)
             {
              geom.background = texture;  
             });
@@ -482,7 +482,7 @@ if (game.status=="playing"){
       var min = Math.ceil(10);
       var max = Math.floor(5);
       var rand= Math.floor(Math.random() * (max - min)) + min;
-      if(rand==6) game.level++;
+      if(rand== 8) game.level++;
       game.targetBaseSpeed += game.incrementSpeedByTime*deltaTime;
     }
 
@@ -679,12 +679,3 @@ function handleMouseMove(event) {
 }
 
 window.addEventListener('load', init, false);
-
-window.addEventListener("mousedown", function(e) {
-    var isRightButton;
-    e = e || window.event;
-    if ("which" in e) // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
-        isRightButton = e.which == 3;
-    else if ("button" in e) // IE, Opera 
-        isRightButton = e.button == 2;
-});
