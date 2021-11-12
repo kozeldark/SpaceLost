@@ -17,6 +17,9 @@ BGM : zeroste. - lost+found
 **Game Screen**
 ![게임화면2](https://user-images.githubusercontent.com/77625823/141467610-50a12501-7dbd-4994-b835-c8e047703252.JPG)
 
+![게임화면3](https://user-images.githubusercontent.com/77625823/141479313-8b4e0b1a-a5b8-4d44-aac3-c96e312bb796.JPG)
+
+
 **Used technology**
 
 * Modeling
