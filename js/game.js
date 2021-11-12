@@ -422,29 +422,33 @@ function createEnnemies(){
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////GAME LOOP/////////////////////////////////////////////////////////////////////////
 
+//ACTIVATED CONTINUOUSLY
 function loop(){
+  //UPDATE CURRENT TIME
   newTime = new Date().getTime();
   deltaTime = newTime-oldTime;
   oldTime = newTime;
 
 if (game.status=="playing"){
 	
-	// Reset Light
+	// RESET LIGHT
+	//SPOTLIGHT IS FOLLOWING ASTRONAUT 
 	if(game.energy == 100) {
 		hemisphereLight.intensity = 0.9;
 		shadowLight.intensity = 0.9;
 	}
 	
+	//MODIFY GAME SPEED
     if (Math.floor(game.distance)%game.distanceForSpeedUpdate == 0 && Math.floor(game.distance) > game.speedLastUpdate){
       game.speedLastUpdate = Math.floor(game.distance);
       var min = Math.ceil(10);
       var max = Math.floor(5);
       var rand= Math.floor(Math.random() * (max - min)) + min;
-      if(rand== 8) game.level++;
+      if(rand==6) game.level++;
       game.targetBaseSpeed += game.incrementSpeedByTime*deltaTime;
     }
 
-
+	//SPAWN OBSTACLES
     if (Math.floor(game.distance)%game.distanceForEnnemiesSpawn == 0 && Math.floor(game.distance) > game.ennemyLastSpawn){
       game.ennemyLastSpawn = Math.floor(game.distance);
       ennemiesHolder.spawnEnnemies();
@@ -454,10 +458,14 @@ if (game.status=="playing"){
    updateDistance();
    updateEnergy();
    game.baseSpeed += (game.targetBaseSpeed - game.baseSpeed) * deltaTime * 0.02;
+   //GAME.SPEED IS THE SPEED OF GAME
    game.speed = game.baseSpeed * game.astroSpeed; 
    
-  }else if(game.status=="gameover"){
+  }
+  //AFTER GMAE IS OVER
+  else if(game.status=="gameover"){
     game.speed *= .99;
+	//MAKE ASTRONAUT MESH TO FALL IN TO THE PLANET
     Astro.mesh.rotation.z -= (-Math.PI/2 - Astro.mesh.rotation.z)*.0002*deltaTime;
     Astro.mesh.rotation.x += 0.0003*deltaTime;
     game.astroFallSpeed *= 1.05;
@@ -474,8 +482,12 @@ if (game.status=="playing"){
   }else if (game.status=="waitingReplay"){
 
   }
+  //PLANET MESH IS KEEP LOTATING
   planet.mesh.rotation.z += .005;
+  //ALSO OBSTACLES ARE ROTATING TOO
   ennemiesHolder.rotateEnnemies();
+  
+  
   renderer.render(scene, camera);
   requestAnimationFrame(loop);
 }
@@ -484,6 +496,7 @@ function updateDistance(){
   game.distance += game.speed*deltaTime*game.ratioSpeedDistance;
 }
 
+//SAVE BEST RECORD TIME 
 function updateBest() {
 	bestTime = game.time;
 	
@@ -502,6 +515,7 @@ function updateBest() {
 	best_timer.innerHTML = str;
 }
 
+//SET TIME TO PASS AS GAME CONTINUES
 function updateTime(){
   const hours = Math.floor(game.time/3600);
   const checkMinutes = Math.floor(game.time/60);
@@ -526,6 +540,7 @@ function stopTime() {
 	}
 }
 
+//UPDATE ENERGY RATE AND STOP GAME IF ENERGY IS 0 
 function updateEnergy(){
   game.energy = Math.max(0, game.energy);
 
@@ -534,13 +549,15 @@ function updateEnergy(){
   }
 }
 
-// drop the Energy if hit the ennemy
+//DECREASE ENERGY WHEN COLLISION HAPPENS
 function removeEnergy(){
   game.energy -= game.ennemyValue;
   remain_energy.innerHTML = game.energy;
   game.energy = Math.max(0, game.energy);
 }
 
+//ASTRONAUT POSITION ACCORDING TO MOUSE POSITION
+//ASTRONAUT SPEED AND EFFECTS FOR COLLISION
 function updateastro(){
   game.astroSpeed = normalize(mousePos.x,-.5,.5,game.astroMinSpeed, game.astroMaxSpeed);
   var targetY = normalize(mousePos.y,-.75,.75,game.astroDefaultHeight-game.astroAmpHeight, game.astroDefaultHeight+game.astroAmpHeight);
@@ -558,15 +575,18 @@ function updateastro(){
   Astro.mesh.rotation.z = (targetY-Astro.mesh.position.y)*deltaTime*game.astroRotXSensivity;
   Astro.mesh.rotation.x = (Astro.mesh.position.y-targetY)*deltaTime*game.astroRotZSensivity;
 
+//MODIFY ASTRONAUTS POSITION AND SPEED WHEN COLLISION HAPPENS
   game.astroCollisionSpeedX += (0-game.astroCollisionSpeedX)*deltaTime * 0.03;
   game.astroCollisionDisplacementX += (0-game.astroCollisionDisplacementX)*deltaTime *0.01;
   game.astroCollisionSpeedY += (0-game.astroCollisionSpeedY)*deltaTime * 0.03;
   game.astroCollisionDisplacementY += (0-game.astroCollisionDisplacementY)*deltaTime *0.01;
  
+ //SPOTLIGHT FOLLOWING ASTORNAUTS POSIITON
   spotLight.target.position.x = Astro.mesh.position.x + 10;
   spotLight.target.position.y = Astro.mesh.position.y;
 }
 
+//NORMALIZING
 function normalize(v,vmin,vmax,tmin, tmax){
   var nv = Math.max(Math.min(v,vmax), vmin);
   var dv = vmax-vmin;
@@ -576,9 +596,9 @@ function normalize(v,vmin,vmax,tmin, tmax){
   return tv;
 }
 
-var timer, timerID, best_timer, remain_energy;
-
+//CHANGE CAMER POSITION WHEN SPACE BAR PRESSED
 function changeCamera(event) {
+	//SPACE BAR KEY CODE =32
 	if (event.keyCode == 32) {
 		if (camPos == 1)
 		{
@@ -588,7 +608,7 @@ function changeCamera(event) {
 			farplane = 5000;
 			camera.position.x = -100;
 			camera.position.z = 0;
-			camera.position.y = 250;
+			camera.position.y = 300;
 			planet.mesh.rotation.z -= .005;
 			camera.lookAt(new THREE.Vector3(50, 100, 0));
 			console.log("Change");
@@ -609,14 +629,21 @@ function changeCamera(event) {
 	}
 }
 
+
+//INITIALIZE ENVIRONMENT (TIMER, ENERGY, BEST TIMER)
+//RESET GAME AND CREATE COMPONENTS
+var timer, timerID, best_timer, remain_energy;
 function init(event){
 	
 	timer = document.getElementById("time_score");
 	remain_energy = document.getElementById("energy");
 	best_timer = document.getElementById("best_score");
-	
+
+  //MOUSE MOVE
   document.addEventListener('mousemove', handleMouseMove, false);
+  //MOUSR CLICK
   document.addEventListener('mouseup', handleMouseUp, false);
+  //SPACE BAR PRESS
   document.addEventListener("keydown", changeCamera, false);
   
   resetGame();
@@ -628,8 +655,9 @@ function init(event){
   loop();
 }
 
+//MOUSE (X, Y) POSITION
 var mousePos = { x: 0, y: 0 };
-
+//CHANGE MOUSE POSITION
 function handleMouseMove(event) {
   var tx = -1 + (event.clientX / WIDTH)*2;
   var ty = 1 - (event.clientY / HEIGHT)*2;
