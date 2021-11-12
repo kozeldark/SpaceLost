@@ -9,6 +9,8 @@ When the game is over, you can start again by pressing the left click.**
 
 -*Demo Link : https://spacelost.herokuapp.com*
 
+BGM : zeroste. - lost+found
+
 **Title Screen**
 ![타이틀](https://user-images.githubusercontent.com/77625823/141467294-07d7b1d6-fd01-4213-9157-e83d0f4375a3.JPG)
 
